@@ -485,3 +485,68 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnSave = document.getElementById('btn-save-date');
   if (btnSave) btnSave.addEventListener('click', saveToCalendar);
 });
+
+// ============================================================
+// GIFT CONFIRM — Submit via WhatsApp
+// ============================================================
+function submitGiftConfirm() {
+  const nama    = (document.getElementById('gc-nama')?.value || '').trim();
+  const bank    = (document.getElementById('gc-bank')?.value || '').trim();
+  const nominal = (document.getElementById('gc-nominal')?.value || '').trim();
+  const ucapan  = (document.getElementById('gc-ucapan')?.value || '').trim();
+  const bukti   = document.getElementById('gc-bukti');
+  const hasBukti = bukti && bukti.files && bukti.files.length > 0;
+
+  if (!nama || !bank || !nominal) {
+    alert('Mohon isi Nama, Nama Bank, dan Nominal terlebih dahulu.');
+    return;
+  }
+
+  const msg = [
+    '🎁 *Konfirmasi Gift — Zaki & Anti*',
+    '',
+    `👤 Nama       : ${nama}`,
+    `🏦 Nama Bank  : ${bank}`,
+    `💰 Nominal    : ${nominal}`,
+    ucapan ? `💬 Ucapan     : ${ucapan}` : '',
+    hasBukti ? `📎 Bukti TF   : (silakan kirim foto bukti transfer)` : '',
+    '',
+    'Terima kasih atas perhatian dan kasih sayang Bapak/Ibu/Saudara/i 🙏',
+  ].filter(Boolean).join('\n');
+
+  // Nomor WhatsApp penerima (ganti dengan nomor asli jika perlu)
+  const waNumber = '6281234567890'; // ← ganti nomor WA
+  const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+// ============================================================
+// RSVP — Submit via WhatsApp
+// ============================================================
+function submitRsvpWa() {
+  const nama      = (document.getElementById('rsvp-name')?.value || '').trim();
+  const kehadiran = document.getElementById('rsvp-kehadiran')?.value || 'hadir';
+  const jumlah    = document.getElementById('rsvp-jumlah')?.value || '1';
+
+  if (!nama) {
+    alert('Mohon isi Nama terlebih dahulu.');
+    return;
+  }
+
+  const kehadiranLabel = kehadiran === 'hadir' ? '✅ Hadir' : '❌ Tidak Hadir';
+
+  const msg = [
+    '📩 *Konfirmasi Kehadiran — Zaki & Anti*',
+    '',
+    `👤 Nama         : ${nama}`,
+    `🎉 Kehadiran    : ${kehadiranLabel}`,
+    `👥 Jumlah       : ${jumlah} Orang`,
+    '',
+    'Terima kasih atas konfirmasi kehadirannya 🙏',
+  ].join('\n');
+
+  // Nomor WhatsApp penerima (ganti dengan nomor asli)
+  const waNumber = '6281234567890'; // ← ganti nomor WA
+  const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
