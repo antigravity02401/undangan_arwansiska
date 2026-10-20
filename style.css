@@ -255,7 +255,7 @@ button {
   transform: translateX(-50%) translateY(-50%);
   font-family: 'Alex Brush', 'Pinyon Script', cursive;
   font-size: clamp(2.8rem, 12vw, 5rem);
-  color: rgba(255, 255, 255, 0.50);
+  color: rgba(0, 0, 0, 0.75);
   white-space: nowrap;
   pointer-events: none;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
