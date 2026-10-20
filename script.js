@@ -7,23 +7,29 @@
 // CONFIG
 // ============================================================
 const CONFIG = {
-  weddingDate: new Date('2025-11-15T13:00:00+07:00'),
+  weddingDate: new Date('2027-01-01T08:00:00+07:00'),
   audioSrc: 'https://web.galeriundanganofficial.com/wp-content/uploads/2025/11/Senario-Zapin-Usik-Mengusik-Lirik.mp3',
-  mapsAkad: 'https://maps.google.com/?q=Jalan+Binaharapan+Gg+Pustu+Sungai+Apit+Siak+Riau',
-  mapsResepsi: 'https://maps.google.com/?q=Jalan+Binaharapan+Gg+Pustu+Sungai+Apit+Siak+Riau',
+  mapsAkad: 'https://maps.google.com/?q=Kampung+Mengkapan+JL+SMP+Gg+Cik+Nor+Siak+Riau',
+  mapsResepsi: 'https://maps.google.com/?q=Kampung+Mengkapan+JL+SMP+Gg+Cik+Nor+Siak+Riau',
 };
 
 // ============================================================
 // GALLERY IMAGES
 // ============================================================
 const GALLERY_IMAGES = [
-  'https://web.galeriundanganofficial.com/wp-content/uploads/2025/11/CVR-Zaki-Anti-14.jpg',
-  'https://web.galeriundanganofficial.com/wp-content/uploads/2025/11/CVR-Zaki-Anti-14.jpg',
-  'https://web.galeriundanganofficial.com/wp-content/uploads/2025/11/CVR-Zaki-Anti-14.jpg',
-  'https://web.galeriundanganofficial.com/wp-content/uploads/2025/11/CVR-Zaki-Anti-14.jpg',
-  'https://web.galeriundanganofficial.com/wp-content/uploads/2025/11/CVR-Zaki-Anti-14.jpg',
-  'https://web.galeriundanganofficial.com/wp-content/uploads/2025/11/CVR-Zaki-Anti-14.jpg',
+  'assets/01.jpg','assets/02.jpg','assets/03.jpg','assets/04.jpg',
+  'assets/05.jpg','assets/06.jpg','assets/07.jpg','assets/08.jpg',
+  'assets/09.jpg','assets/10.jpg','assets/11.jpg','assets/12.jpg',
+  'assets/13.jpg','assets/14.jpg','assets/15.jpg','assets/16.jpg',
+  'assets/17.jpg','assets/18.jpg','assets/19.jpg','assets/20.jpg',
+  'assets/21.jpg','assets/22.jpg','assets/23.jpg','assets/24.jpg',
+  'assets/25.jpg','assets/26.jpg','assets/27.jpg','assets/28.jpg',
+  'assets/29.jpg','assets/30.jpg','assets/31.jpg','assets/32.jpg',
+  'assets/33.jpg','assets/34.jpg',
 ];
+
+// Gambar grid utama = 12 pertama; sisanya masuk slider
+const GALLERY_GRID_COUNT = 12;
 
 // ============================================================
 // RSVP DATA (in-memory, replace with backend later)
@@ -382,7 +388,9 @@ function buildGallery() {
   const grid = document.getElementById('gallery-grid');
   if (!grid) return;
 
-  grid.innerHTML = GALLERY_IMAGES.map((src, i) => `
+  // --- Grid utama: 12 foto pertama dengan layout masonry ---
+  const gridImgs = GALLERY_IMAGES.slice(0, GALLERY_GRID_COUNT);
+  grid.innerHTML = gridImgs.map((src, i) => `
     <div class="gallery-item" onclick="openLightbox(${i})">
       <img src="${src}" alt="Foto ${i + 1}" loading="lazy">
       <div class="gallery-item-overlay">
@@ -390,6 +398,24 @@ function buildGallery() {
       </div>
     </div>
   `).join('');
+
+  // --- Slider strip: sisa gambar (index 12–33) ---
+  const sliderImgs = GALLERY_IMAGES.slice(GALLERY_GRID_COUNT);
+  const strip = document.getElementById('gallery-strip');
+  if (!strip || sliderImgs.length === 0) return;
+
+  // Duplikasi untuk efek loop tanpa jeda
+  const allSlider = [...sliderImgs, ...sliderImgs];
+  const track = strip.querySelector('.gallery-strip-track');
+  track.innerHTML = allSlider.map((src, i) => {
+    const realIdx = GALLERY_GRID_COUNT + (i % sliderImgs.length);
+    return `
+      <div class="gallery-strip-item" onclick="openLightbox(${realIdx})">
+        <img src="${src}" alt="Foto ${realIdx + 1}" loading="lazy">
+        <div class="gallery-item-overlay"><span class="zoom-icon">🔍</span></div>
+      </div>
+    `;
+  }).join('');
 }
 
 // ============================================================

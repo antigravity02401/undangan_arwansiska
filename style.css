@@ -1138,9 +1138,9 @@ section {
   position: relative;
   overflow: hidden;
   /* Parallax: gambar 3.jpg tetap diam, konten yang scroll */
-  background-image: url('assets/3.jpg');
+  background-image: url('assets/2.jpg');
   background-attachment: fixed;
-  background-size: auto;
+  background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #0d0a06;
@@ -1302,7 +1302,7 @@ section {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-/* ===================================================
+
 /* ===================================================
    LOVE STORY TIMELINE
    =================================================== */
@@ -1312,7 +1312,7 @@ section {
   /* Parallax bg.jpeg — ukuran asli, posisi tetap saat scroll */
   background-image: url('assets/bg.jpeg');
   background-attachment: fixed;
-  background-size: auto;
+  background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #f5edd5;
@@ -1476,8 +1476,10 @@ section {
    =================================================== */
 #gallery {
   background: var(--cream);
+  overflow: hidden;
 }
 
+/* --- Grid utama: Masonry-style 3 kolom --- */
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1485,18 +1487,41 @@ section {
   margin-top: 10px;
 }
 
-.gallery-item {
-  position: relative;
-  aspect-ratio: 1;
-  overflow: hidden;
-  border-radius: 8px;
-  cursor: pointer;
+/* Pola span variatif agar terlihat Masonry — TANPA celah kosong:
+   Row 1: [span2][1]    → item 1, 2
+   Row 2: [1][1][1]     → item 3, 4, 5
+   Row 3: [1][span2]    → item 6, 7
+   Row 4: [1][1][1]     → item 8, 9, 10
+   Row 5: [span2][1]    → item 11, 12 */
+.gallery-item:nth-child(1),
+.gallery-item:nth-child(11) {
+  grid-column: span 2;
+  aspect-ratio: 16/9;
 }
 
-.gallery-item:first-child,
-.gallery-item:nth-child(4) {
-  grid-column: span 2;
-  aspect-ratio: 2/1;
+.gallery-item:nth-child(7) {
+  grid-column: 2 / span 2;  /* mulai dari kolom 2, span 2 kolom ke kanan */
+  aspect-ratio: 16/9;
+}
+
+.gallery-item:nth-child(2),
+.gallery-item:nth-child(3),
+.gallery-item:nth-child(4),
+.gallery-item:nth-child(5),
+.gallery-item:nth-child(6),
+.gallery-item:nth-child(8),
+.gallery-item:nth-child(9),
+.gallery-item:nth-child(10),
+.gallery-item:nth-child(12) {
+  aspect-ratio: 1;
+}
+
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #d9cebf;
 }
 
 .gallery-item img {
@@ -1504,6 +1529,7 @@ section {
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
+  display: block;
 }
 
 .gallery-item:hover img {
@@ -1535,6 +1561,73 @@ section {
 .gallery-item:hover .zoom-icon {
   opacity: 1;
   transform: scale(1);
+}
+
+/* --- Strip slider animasi geser --- */
+.gallery-strip {
+  margin-top: 16px;
+  overflow: hidden;
+  position: relative;
+  /* fade tepi kiri-kanan */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+/* Label pemisah di atas strip */
+.gallery-strip::before {
+  content: '— More Moments —';
+  display: block;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  margin-bottom: 12px;
+  /* label tidak ikut mask */
+  position: relative;
+  z-index: 1;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+@keyframes strip-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.gallery-strip-track {
+  display: flex;
+  gap: 8px;
+  width: max-content;
+  animation: strip-scroll 30s linear infinite;
+}
+
+.gallery-strip:hover .gallery-strip-track {
+  animation-play-state: paused;
+}
+
+.gallery-strip-item {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #d9cebf;
+}
+
+.gallery-strip-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  display: block;
+}
+
+.gallery-strip-item:hover img {
+  transform: scale(1.1);
 }
 
 /* Lightbox */
@@ -1620,7 +1713,7 @@ section {
 #gift {
   position: relative;
   /* 1.jpg FIXED - tidak bergerak saat scroll */
-  background: url('assets/1.jpg') center center / auto no-repeat fixed;
+  background: url('assets/1.jpg') center center / cover no-repeat fixed;
   padding: 60px 0;
 }
 
@@ -1942,7 +2035,7 @@ section {
 #rsvp {
   position: relative;
   /* 1.jpg FIXED - tidak bergerak saat scroll */
-  background: url('assets/1.jpg') center center / auto no-repeat fixed;
+  background: url('assets/5.jpg') center center / cover no-repeat fixed;
   padding: 60px 0;
   overflow: hidden;
 }
@@ -1970,7 +2063,7 @@ section {
   text-align: center;
   letter-spacing: 4px;
   margin-bottom: 16px;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
 .rsvp-intro {
@@ -1981,7 +2074,7 @@ section {
   margin-bottom: 28px;
   line-height: 1.8;
   text-align: center;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
 }
 
 /* Label asterisk merah */
@@ -2009,7 +2102,7 @@ section {
   font-size: 0.88rem;
   font-weight: 600;
   color: #ffffff;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .form-input,
@@ -2206,7 +2299,7 @@ section {
 #guestbook {
   position: relative;
   /* 3.jpg FIXED - tidak bergerak saat scroll */
-  background: url('assets/3.jpg') center center / auto no-repeat fixed;
+  background: url('assets/3.jpg') center center / cover no-repeat fixed;
   overflow: hidden;
 }
 
@@ -2241,7 +2334,7 @@ section {
 
 #guestbook .form-label {
   color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Input dalam guestbook: putih semi-transparan */
@@ -2263,6 +2356,14 @@ section {
   flex-direction: column;
   gap: 14px;
   margin-bottom: 32px;
+  /* Glassmorphism */
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 18px;
+  padding: 24px 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
 }
 
 .wishes-list {
@@ -2273,11 +2374,14 @@ section {
 }
 
 .wish-item {
-  background: var(--white);
-  border: 1px solid rgba(215, 187, 131, 0.3);
-  border-radius: 12px;
+  /* Glassmorphism */
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 14px;
   padding: 18px 20px;
-  box-shadow: 0 2px 12px rgba(79, 35, 35, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   animation: fadeInUp 0.5s ease both;
 }
 
@@ -2307,7 +2411,8 @@ section {
   font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--burgundy);
+  color: #ffffff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .wish-badge {
@@ -2340,7 +2445,7 @@ section {
 .wish-message {
   font-family: var(--font-body);
   font-size: 0.85rem;
-  color: var(--text-light);
+  color: rgba(255, 255, 255, 0.9);
   font-style: italic;
   line-height: 1.7;
 }
@@ -2361,11 +2466,27 @@ section {
    CLOSING / PENUTUP
    =================================================== */
 #closing {
-  background: var(--burgundy);
+  background: url('assets/6.jpg') center center / cover no-repeat fixed;
+  background-color: var(--burgundy);
   text-align: center;
   padding: 80px 24px;
   position: relative;
   overflow: hidden;
+}
+
+/* Overlay agar teks tetap terbaca di atas 6.jpg */
+#closing::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.60);
+  z-index: 0;
+}
+
+#closing .section-inner,
+#closing > * {
+  position: relative;
+  z-index: 1;
 }
 
 .closing-title {
@@ -2509,9 +2630,21 @@ footer {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .gallery-item:first-child,
-  .gallery-item:nth-child(4) {
+  /* Reset pola span untuk layar kecil */
+  .gallery-item:nth-child(1),
+  .gallery-item:nth-child(11) {
     grid-column: span 2;
+    aspect-ratio: 16/9;
+  }
+
+  .gallery-item:nth-child(7) {
+    grid-column: 2 / span 2;
+    aspect-ratio: 16/9;
+  }
+
+  .gallery-strip-item {
+    width: 100px;
+    height: 100px;
   }
 
   .countdown-num {
