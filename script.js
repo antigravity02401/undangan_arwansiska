@@ -1,7 +1,16 @@
 /**
- * UNDANGAN DIGITAL - ZAKI & ANTI
- * script.js — Interactive Logic
+ * UNDANGAN DIGITAL - ANWAR & SISKA
+ * script.js — Interactive Logic + Supabase Integration
  */
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// ============================================================
+// SUPABASE CLIENT
+// ============================================================
+const _SB = createClient(
+  'https://xabmzlvehwmpsqmejvhv.supabase.co',
+  'sb_publishable_MvSXWigH_3AN5ZWrelnFag_ohImhKqs'
+);
 
 // ============================================================
 // CONFIG
@@ -32,10 +41,10 @@ const GALLERY_IMAGES = [
 const GALLERY_GRID_COUNT = 12;
 
 // ============================================================
-// RSVP DATA (in-memory, replace with backend later)
+// STATE
 // ============================================================
-let rsvpData = JSON.parse(localStorage.getItem('rsvpData') || '[]');
-let wishesData = JSON.parse(localStorage.getItem('wishesData') || '[]');
+let rsvpData   = [];   // tidak dipakai untuk submit, hanya stat lokal
+let wishesData = [];   // akan diisi dari Supabase
 
 // ============================================================
 // AUDIO PLAYER
@@ -307,42 +316,74 @@ function updateRSVPStats() {
 // ============================================================
 // GUESTBOOK / WISHES
 // ============================================================
-function submitWish(e) {
+async function submitWish(e) {
   e.preventDefault();
   const name    = document.getElementById('wish-name').value.trim();
   const message = document.getElementById('wish-message').value.trim();
 
   if (!name || !message) { showToast('Mohon isi nama dan ucapan'); return; }
 
-  const entry = { id: Date.now(), name, message, date: new Date().toISOString() };
-  wishesData.unshift(entry);
-  localStorage.setItem('wishesData', JSON.stringify(wishesData));
-  renderWishes();
-  showToast('✓ Ucapan & doa terkirim!');
+  const btn = document.getElementById('btn-wish-submit');
+  if (btn) { btn.disabled = true; btn.textContent = 'Mengirim...'; }
 
-  document.getElementById('wish-name').value    = '';
-  document.getElementById('wish-message').value = '';
+  try {
+    const { error } = await _SB.from('guestbook').insert({ nama: name, pesan: message });
+    if (error) throw error;
+
+    showToast('✓ Ucapan & doa terkirim!');
+    document.getElementById('wish-name').value    = '';
+    document.getElementById('wish-message').value = '';
+    await loadAndRenderWishes();
+  } catch (err) {
+    console.error('Guestbook error:', err);
+    showToast('Gagal mengirim ucapan. Coba lagi.');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '💌 Kirim Ucapan'; }
+  }
+}
+
+async function loadAndRenderWishes() {
+  const list = document.getElementById('wishes-list');
+  if (!list) return;
+
+  list.innerHTML = '<p style="color:var(--text-light);font-style:italic;font-size:0.85rem;text-align:center;padding:20px 0;">Memuat ucapan... ⏳</p>';
+
+  try {
+    const { data, error } = await _SB
+      .from('guestbook')
+      .select('id, nama, pesan, created_at')
+      .eq('approved', true)
+      .order('created_at', { ascending: false })
+      .limit(30);
+
+    if (error) throw error;
+    wishesData = data || [];
+    renderWishes();
+  } catch (err) {
+    console.error('Load guestbook error:', err);
+    list.innerHTML = '<p style="color:var(--text-light);font-style:italic;font-size:0.85rem;text-align:center;padding:20px 0;">Gagal memuat ucapan.</p>';
+  }
 }
 
 function renderWishes() {
   const list = document.getElementById('wishes-list');
   if (!list) return;
 
-  if (wishesData.length === 0) {
+  if (!wishesData || wishesData.length === 0) {
     list.innerHTML = '<p style="color:var(--text-light);font-style:italic;font-size:0.85rem;text-align:center;padding:20px 0;">Jadilah yang pertama mengirimkan ucapan 💌</p>';
     return;
   }
 
-  list.innerHTML = wishesData.slice(0, 20).map(w => `
+  list.innerHTML = wishesData.map(w => `
     <div class="wish-item">
       <div class="wish-item-header">
-        <div class="wish-avatar">${w.name.charAt(0).toUpperCase()}</div>
+        <div class="wish-avatar">${escapeHTML(w.nama).charAt(0).toUpperCase()}</div>
         <div>
-          <div class="wish-name">${escapeHTML(w.name)}</div>
-          <div style="font-size:0.65rem;color:var(--text-light);font-family:var(--font-ui);margin-top:2px;">${formatDate(w.date)}</div>
+          <div class="wish-name">${escapeHTML(w.nama)}</div>
+          <div style="font-size:0.65rem;color:var(--text-light);font-family:var(--font-ui);margin-top:2px;">${formatDate(w.created_at)}</div>
         </div>
       </div>
-      <div class="wish-message">"${escapeHTML(w.message)}"</div>
+      <div class="wish-message">"${escapeHTML(w.pesan)}"</div>
     </div>
   `).join('');
 }
@@ -455,8 +496,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Build gallery
   buildGallery();
 
-  // Render wishes
-  renderWishes();
+  // Load & render guestbook dari Supabase
+  loadAndRenderWishes();
 
   // RSVP stats
   updateRSVPStats();
@@ -513,66 +554,102 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================
-// GIFT CONFIRM — Submit via WhatsApp
+// GIFT CONFIRM — Simpan ke Supabase + kirim WA
 // ============================================================
-function submitGiftConfirm() {
+async function submitGiftConfirm() {
   const nama    = (document.getElementById('gc-nama')?.value || '').trim();
   const bank    = (document.getElementById('gc-bank')?.value || '').trim();
   const nominal = (document.getElementById('gc-nominal')?.value || '').trim();
   const ucapan  = (document.getElementById('gc-ucapan')?.value || '').trim();
-  const bukti   = document.getElementById('gc-bukti');
-  const hasBukti = bukti && bukti.files && bukti.files.length > 0;
+  const buktiEl = document.getElementById('gc-bukti');
+  const buktiFile = buktiEl?.files?.[0] || null;
 
   if (!nama || !bank || !nominal) {
-    alert('Mohon isi Nama, Nama Bank, dan Nominal terlebih dahulu.');
+    showToast('Mohon isi Nama, Nama Bank, dan Nominal.');
     return;
   }
 
-  const msg = [
-    '🎁 *Konfirmasi Gift — Zaki & Anti*',
-    '',
-    `👤 Nama       : ${nama}`,
-    `🏦 Nama Bank  : ${bank}`,
-    `💰 Nominal    : ${nominal}`,
-    ucapan ? `💬 Ucapan     : ${ucapan}` : '',
-    hasBukti ? `📎 Bukti TF   : (silakan kirim foto bukti transfer)` : '',
-    '',
-    'Terima kasih atas perhatian dan kasih sayang Bapak/Ibu/Saudara/i 🙏',
-  ].filter(Boolean).join('\n');
+  const btn = document.getElementById('btn-gift-confirm');
+  if (btn) { btn.disabled = true; btn.textContent = 'Mengirim...'; }
 
-  // Nomor WhatsApp penerima (ganti dengan nomor asli jika perlu)
-  const waNumber = '6281234567890'; // ← ganti nomor WA
-  const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
+  try {
+    // 1. Upload foto bukti ke Supabase Storage (jika ada)
+    let buktiUrl = null;
+    if (buktiFile) {
+      const ext = buktiFile.name.split('.').pop();
+      const fileName = `bukti_${Date.now()}.${ext}`;
+      const { error: upErr } = await _SB.storage
+        .from('gift-bukti')
+        .upload(fileName, buktiFile, { cacheControl: '3600', upsert: false });
+      if (!upErr) {
+        const { data: urlData } = _SB.storage.from('gift-bukti').getPublicUrl(fileName);
+        buktiUrl = urlData?.publicUrl || null;
+      }
+    }
+
+    // 2. Simpan ke tabel gift_confirm
+    const { error } = await _SB.from('gift_confirm').insert({
+      nama, nama_bank: bank, nominal,
+      ucapan: ucapan || null,
+      bukti_url: buktiUrl,
+    });
+    if (error) throw error;
+
+    showToast('✓ Konfirmasi gift berhasil dikirim!');
+
+    // 3. Reset form
+    ['gc-nama','gc-bank','gc-nominal','gc-ucapan'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    if (buktiEl) buktiEl.value = '';
+
+  } catch (err) {
+    console.error('Gift confirm error:', err);
+    showToast('Gagal mengirim konfirmasi. Coba lagi.');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> Konfirmasi';
+    }
+  }
 }
 
 // ============================================================
-// RSVP — Submit via WhatsApp
+// RSVP — Simpan ke Supabase
 // ============================================================
-function submitRsvpWa() {
+async function submitRsvpWa() {
   const nama      = (document.getElementById('rsvp-name')?.value || '').trim();
   const kehadiran = document.getElementById('rsvp-kehadiran')?.value || 'hadir';
-  const jumlah    = document.getElementById('rsvp-jumlah')?.value || '1';
+  const jumlah    = parseInt(document.getElementById('rsvp-jumlah')?.value || '1');
+  const namaTamu  = getGuestName();
 
   if (!nama) {
-    alert('Mohon isi Nama terlebih dahulu.');
+    showToast('Mohon isi Nama terlebih dahulu.');
     return;
   }
 
-  const kehadiranLabel = kehadiran === 'hadir' ? '✅ Hadir' : '❌ Tidak Hadir';
+  const btn = document.getElementById('btn-rsvp-submit');
+  if (btn) { btn.disabled = true; btn.textContent = 'Mengirim...'; }
 
-  const msg = [
-    '📩 *Konfirmasi Kehadiran — Zaki & Anti*',
-    '',
-    `👤 Nama         : ${nama}`,
-    `🎉 Kehadiran    : ${kehadiranLabel}`,
-    `👥 Jumlah       : ${jumlah} Orang`,
-    '',
-    'Terima kasih atas konfirmasi kehadirannya 🙏',
-  ].join('\n');
+  try {
+    const { error } = await _SB.from('rsvp').insert({
+      nama, kehadiran, jumlah,
+      nama_tamu: namaTamu !== 'Tamu Undangan' ? namaTamu : null,
+    });
+    if (error) throw error;
 
-  // Nomor WhatsApp penerima (ganti dengan nomor asli)
-  const waNumber = '6281234567890'; // ← ganti nomor WA
-  const url = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
+    const label = kehadiran === 'hadir' ? '✅ Hadir' : '❌ Tidak Hadir';
+    showToast(`✓ Konfirmasi ${label} berhasil dikirim!`);
+
+    // Reset form
+    const nameEl = document.getElementById('rsvp-name');
+    if (nameEl) nameEl.value = '';
+
+  } catch (err) {
+    console.error('RSVP error:', err);
+    showToast('Gagal mengirim konfirmasi. Coba lagi.');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Submit'; }
+  }
 }

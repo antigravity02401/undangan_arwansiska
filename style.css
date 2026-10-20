@@ -609,7 +609,6 @@ section {
   font-size: clamp(3rem, 12vw, 5.5rem);
   color: #ffd75a;
   line-height: 1;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
 }
 
 .hero-couple-name .and-sign {
@@ -2628,17 +2627,31 @@ footer {
 
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
   }
 
-  /* Reset pola span untuk layar kecil */
+  /* Reset SEMUA span dulu */
+  .gallery-item:nth-child(n) {
+    grid-column: auto;
+    aspect-ratio: 1;
+  }
+
+  /* Hanya item 1 dan 6 yang full-width sebagai aksen */
   .gallery-item:nth-child(1),
-  .gallery-item:nth-child(11) {
+  .gallery-item:nth-child(6) {
     grid-column: span 2;
     aspect-ratio: 16/9;
   }
 
+  /* Item ke-7 normal saja di mobile */
   .gallery-item:nth-child(7) {
-    grid-column: 2 / span 2;
+    grid-column: auto;
+    aspect-ratio: 1;
+  }
+
+  /* Item ke-11 juga full-width */
+  .gallery-item:nth-child(11) {
+    grid-column: span 2;
     aspect-ratio: 16/9;
   }
 

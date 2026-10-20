@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Anwar & Siska</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Alex+Brush&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:       #D7BB83;
+      --gold-dark:  #C5A054;
+      --bg:         #0f0c0a;
+      --surface:    #1a1410;
+      --surface2:   #221c16;
+      --border:     rgba(215,187,131,0.18);
+      --text:       #f0e8dc;
+      --text-muted: rgba(240,232,220,0.55);
+      --green:      #4ade80;
+      --red:        #f87171;
+      --blue:       #60a5fa;
+      --radius:     12px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ---- HEADER ---- */
+    header {
+      background: linear-gradient(135deg, #1a1410 0%, #2a1f14 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-logo {
+      font-family: 'Alex Brush', cursive;
+      font-size: 1.6rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .header-sub {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 36px;
+      background: var(--border);
+    }
+
+    .btn-refresh {
+      background: rgba(215,187,131,0.12);
+      color: var(--gold);
+      border: 1px solid var(--border);
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: background 0.2s, transform 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-refresh:hover { background: rgba(215,187,131,0.22); transform: translateY(-1px); }
+    .btn-refresh:active { transform: translateY(0); }
+
+    .spin { display: inline-block; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- LAYOUT ---- */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* ---- STAT CARDS ---- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .stat-value.green  { color: var(--green); }
+    .stat-value.red    { color: var(--red); }
+    .stat-value.blue   { color: var(--blue); }
+
+    .stat-icon {
+      position: absolute;
+      right: 16px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      opacity: 0.12;
+    }
+
+    /* ---- SECTION ---- */
+    .section {
+      margin-bottom: 48px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      display: block;
+      width: 3px;
+      height: 18px;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+
+    .badge {
+      background: rgba(215,187,131,0.15);
+      color: var(--gold);
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 99px;
+      letter-spacing: 1px;
+    }
+
+    /* ---- TABLE ---- */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--surface2);
+    }
+
+    thead th {
+      padding: 13px 16px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(215,187,131,0.07);
+      transition: background 0.15s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(215,187,131,0.05); }
+
+    tbody td {
+      padding: 13px 16px;
+      font-size: 0.85rem;
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    .td-no {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      width: 40px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .pill-hadir   { background: rgba(74,222,128,0.15); color: var(--green); }
+    .pill-tidak   { background: rgba(248,113,113,0.15); color: var(--red); }
+    .pill-gift    { background: rgba(96,165,250,0.15);  color: var(--blue); }
+
+    .td-date {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .td-nominal {
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .td-bukti a {
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .td-bukti a:hover { text-decoration: underline; }
+
+    /* ---- EMPTY ---- */
+    .empty-state {
+      padding: 56px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.5; }
+
+    /* ---- LOADING ---- */
+    .loading {
+      padding: 48px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* ---- TOAST ---- */
+    #toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.25s ease;
+      pointer-events: none;
+    }
+
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ---- TABS ---- */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      width: fit-content;
+      margin-bottom: 32px;
+    }
+
+    .tab-btn {
+      padding: 8px 20px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: rgba(215,187,131,0.18);
+      color: var(--gold);
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 640px) {
+      header { padding: 16px; }
+      .container { padding: 20px 16px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      thead th, tbody td { padding: 10px 10px; font-size: 0.78rem; }
+      .header-divider, .header-sub { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== HEADER ==================== -->
+  <header>
+    <div class="header-title">
+      <div>
+        <div class="header-logo">Anwar &amp; Siska</div>
+        <div class="header-sub">Admin Dashboard</div>
+      </div>
+      <div class="header-divider"></div>
+      <div style="font-size:0.72rem;color:var(--text-muted);">1 Januari 2027</div>
+    </div>
+    <button class="btn-refresh" onclick="loadAll()">
+      <span id="refresh-icon">↻</span> Refresh
+    </button>
+  </header>
+
+  <!-- ==================== MAIN ==================== -->
+  <div class="container">
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total RSVP</div>
+        <div class="stat-value" id="stat-total-rsvp">—</div>
+        <div class="stat-icon">📩</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Hadir</div>
+        <div class="stat-value green" id="stat-hadir">—</div>
+        <div class="stat-icon">✅</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tidak Hadir</div>
+        <div class="stat-value red" id="stat-tidak">—</div>
+        <div class="stat-icon">❌</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Gift Confirm</div>
+        <div class="stat-value blue" id="stat-gift">—</div>
+        <div class="stat-icon">🎁</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Tamu</div>
+        <div class="stat-value" id="stat-tamu">—</div>
+        <div class="stat-icon">👥</div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('rsvp', this)">📩 RSVP</button>
+      <button class="tab-btn" onclick="switchTab('gift', this)">🎁 Gift Confirm</button>
+    </div>
+
+    <!-- ===== TAB RSVP ===== -->
+    <div id="tab-rsvp" class="section">
+      <div class="section-header">
+        <div class="section-title">Data RSVP</div>
+        <span class="badge" id="rsvp-count-badge">0 data</span>
+      </div>
+      <div class="table-wrap">
+        <div id="rsvp-table-area">
+          <div class="loading"><span class="spin">↻</span> Memuat data...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TAB GIFT ===== -->
+    <div id="tab-gift" class="section" style="display:none;">
+      <div class="section-header">
+        <div class="section-title">Data Gift Confirm</div>
+        <span class="badge" id="gift-count-badge">0 data</span>
+      </div>
+      <div class="table-wrap">
+        <div id="gift-table-area">
+          <div class="loading"><span class="spin">↻</span> Memuat data...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast"></div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const SB = createClient(
+      'https://xabmzlvehwmpsqmejvhv.supabase.co',
+      'sb_publishable_MvSXWigH_3AN5ZWrelnFag_ohImhKqs'
+    );
+
+    // ---- Toast ----
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    // ---- Format tanggal ----
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleString('id-ID', {
+        day: '2-digit', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    // ---- Format rupiah ----
+    function fmtRupiah(str) {
+      if (!str) return '—';
+      const num = parseInt(str.replace(/\D/g, ''));
+      if (isNaN(num)) return str;
+      return 'Rp ' + num.toLocaleString('id-ID');
+    }
+
+    // ---- Load RSVP ----
+    async function loadRsvp() {
+      const area = document.getElementById('rsvp-table-area');
+      area.innerHTML = '<div class="loading"><span class="spin">↻</span> Memuat data...</div>';
+
+      const { data, error } = await SB
+        .from('rsvp')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        area.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Gagal memuat: ${error.message}</div>`;
+        return [];
+      }
+
+      if (!data || data.length === 0) {
+        area.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>Belum ada data RSVP</div>';
+        document.getElementById('rsvp-count-badge').textContent = '0 data';
+        return [];
+      }
+
+      document.getElementById('rsvp-count-badge').textContent = data.length + ' data';
+
+      area.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nama</th>
+              <th>Nama Tamu (URL)</th>
+              <th>Kehadiran</th>
+              <th>Jumlah</th>
+              <th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.map((r, i) => `
+              <tr>
+                <td class="td-no">${i + 1}</td>
+                <td><strong>${esc(r.nama)}</strong></td>
+                <td style="color:var(--text-muted)">${r.nama_tamu ? esc(r.nama_tamu) : '—'}</td>
+                <td>
+                  <span class="pill ${r.kehadiran === 'hadir' ? 'pill-hadir' : 'pill-tidak'}">
+                    ${r.kehadiran === 'hadir' ? '✅' : '❌'} ${r.kehadiran === 'hadir' ? 'Hadir' : 'Tidak Hadir'}
+                  </span>
+                </td>
+                <td>${r.jumlah} orang</td>
+                <td class="td-date">${fmtDate(r.created_at)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      return data;
+    }
+
+    // ---- Load Gift Confirm ----
+    async function loadGift() {
+      const area = document.getElementById('gift-table-area');
+      area.innerHTML = '<div class="loading"><span class="spin">↻</span> Memuat data...</div>';
+
+      const { data, error } = await SB
+        .from('gift_confirm')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        area.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div>Gagal memuat: ${error.message}</div>`;
+        return [];
+      }
+
+      if (!data || data.length === 0) {
+        area.innerHTML = '<div class="empty-state"><div class="empty-icon">🎁</div>Belum ada data Gift Confirm</div>';
+        document.getElementById('gift-count-badge').textContent = '0 data';
+        return [];
+      }
+
+      document.getElementById('gift-count-badge').textContent = data.length + ' data';
+
+      area.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nama</th>
+              <th>Bank</th>
+              <th>Nominal</th>
+              <th>Ucapan</th>
+              <th>Bukti TF</th>
+              <th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.map((g, i) => `
+              <tr>
+                <td class="td-no">${i + 1}</td>
+                <td><strong>${esc(g.nama)}</strong></td>
+                <td>
+                  <span class="pill pill-gift">${esc(g.nama_bank)}</span>
+                </td>
+                <td class="td-nominal">${fmtRupiah(g.nominal)}</td>
+                <td style="color:var(--text-muted);font-size:0.8rem;max-width:180px;">${g.ucapan ? esc(g.ucapan) : '—'}</td>
+                <td class="td-bukti">
+                  ${g.bukti_url
+                    ? `<a href="${g.bukti_url}" target="_blank">🖼 Lihat foto</a>`
+                    : '<span style="color:var(--text-muted)">—</span>'}
+                </td>
+                <td class="td-date">${fmtDate(g.created_at)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      return data;
+    }
+
+    // ---- Update Stat Cards ----
+    function updateStats(rsvpData, giftData) {
+      const hadir = rsvpData.filter(r => r.kehadiran === 'hadir').length;
+      const tidak = rsvpData.filter(r => r.kehadiran === 'tidak').length;
+      const tamu  = rsvpData.filter(r => r.kehadiran === 'hadir').reduce((acc, r) => acc + (r.jumlah || 1), 0);
+
+      document.getElementById('stat-total-rsvp').textContent = rsvpData.length;
+      document.getElementById('stat-hadir').textContent      = hadir;
+      document.getElementById('stat-tidak').textContent      = tidak;
+      document.getElementById('stat-gift').textContent       = giftData.length;
+      document.getElementById('stat-tamu').textContent       = tamu;
+    }
+
+    // ---- Load All ----
+    window.loadAll = async function () {
+      const icon = document.getElementById('refresh-icon');
+      icon.classList.add('spin');
+      try {
+        const [rsvpData, giftData] = await Promise.all([loadRsvp(), loadGift()]);
+        updateStats(rsvpData, giftData);
+        toast('✓ Data berhasil dimuat');
+      } catch (e) {
+        toast('Gagal memuat data');
+      } finally {
+        icon.classList.remove('spin');
+      }
+    };
+
+    // ---- Tab Switch ----
+    window.switchTab = function (tab, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-rsvp').style.display  = tab === 'rsvp'  ? '' : 'none';
+      document.getElementById('tab-gift').style.display  = tab === 'gift'  ? '' : 'none';
+    };
+
+    // ---- Escape HTML ----
+    function esc(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // ---- Init ----
+    loadAll();
+  </script>
+
+</body>
+</html>
