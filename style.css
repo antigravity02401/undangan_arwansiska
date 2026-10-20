@@ -760,8 +760,8 @@ section {
    =================================================== */
 #couple {
   position: relative;
-  /* bg.jpeg — mobile-safe (scroll), parallax hanya di desktop */
-  background: url('assets/bg.jpeg') center top / cover no-repeat scroll;
+  /* bg.jpeg — ukuran asli, posisi tetap saat scroll */
+  background: url('assets/bg.jpeg') center center / auto no-repeat fixed;
   overflow: hidden;
   padding: 32px 16px 48px;
 }
@@ -990,11 +990,11 @@ section {
   min-height: 100vh;
   display: flex;
   align-items: flex-end;
-  /* Parallax desktop-only (fixed tidak berfungsi di iOS/mobile) */
+  /* Background ukuran asli, tetap diam saat scroll */
   background-image: url('assets/1.jpg');
-  background-attachment: scroll;
-  background-size: cover;
-  background-position: center top;
+  background-attachment: fixed;
+  background-size: auto;
+  background-position: center center;
   background-repeat: no-repeat;
   background-color: #1a0a0a;
   overflow: hidden;
@@ -1136,10 +1136,10 @@ section {
 #event-details {
   position: relative;
   overflow: hidden;
-  /* Parallax desktop-only */
+  /* Background ukuran asli, tetap diam saat scroll */
   background-image: url('assets/2.jpg');
-  background-attachment: scroll;
-  background-size: cover;
+  background-attachment: fixed;
+  background-size: auto;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #0d0a06;
@@ -1308,10 +1308,10 @@ section {
 #love-story {
   position: relative;
   overflow: hidden;
-  /* Parallax desktop-only */
+  /* Background ukuran asli, tetap diam saat scroll */
   background-image: url('assets/bg.jpeg');
-  background-attachment: scroll;
-  background-size: cover;
+  background-attachment: fixed;
+  background-size: auto;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #f5edd5;
@@ -1711,8 +1711,8 @@ section {
    =================================================== */
 #gift {
   position: relative;
-  /* 1.jpg — mobile-safe */
-  background: url('assets/1.jpg') center center / cover no-repeat scroll;
+  /* 1.jpg — ukuran asli, tetap diam saat scroll */
+  background: url('assets/1.jpg') center center / auto no-repeat fixed;
   padding: 60px 0;
 }
 
@@ -2033,8 +2033,8 @@ section {
    =================================================== */
 #rsvp {
   position: relative;
-  /* 5.jpg — mobile-safe */
-  background: url('assets/5.jpg') center center / cover no-repeat scroll;
+  /* 5.jpg — ukuran asli, tetap diam saat scroll */
+  background: url('assets/5.jpg') center center / auto no-repeat fixed;
   padding: 60px 0;
   overflow: hidden;
 }
@@ -2297,8 +2297,8 @@ section {
    =================================================== */
 #guestbook {
   position: relative;
-  /* 3.jpg — mobile-safe */
-  background: url('assets/3.jpg') center center / cover no-repeat scroll;
+  /* 3.jpg — ukuran asli, tetap diam saat scroll */
+  background: url('assets/3.jpg') center center / auto no-repeat fixed;
   overflow: hidden;
 }
 
@@ -2465,7 +2465,8 @@ section {
    CLOSING / PENUTUP
    =================================================== */
 #closing {
-  background: url('assets/6.jpg') center center / cover no-repeat scroll;
+  /* 6.jpg — ukuran asli, tetap diam saat scroll */
+  background: url('assets/6.jpg') center center / auto no-repeat fixed;
   background-color: var(--burgundy);
   text-align: center;
   padding: 80px 24px;
@@ -2675,42 +2676,6 @@ footer {
   }
 }
 
-/* ===================================================
-   PARALLAX — DESKTOP ONLY
-   background-attachment: fixed TIDAK bekerja di iOS Safari
-   dan sebagian Android browser karena viewport rendering bug.
-   Solusi: aktifkan fixed hanya di device dengan pointer mouse (non-touch)
-   =================================================== */
-@media (hover: hover) and (pointer: fine) and (min-width: 769px) {
-  #couple {
-    background-attachment: fixed;
-  }
-
-  #save-the-date {
-    background-attachment: fixed;
-  }
-
-  #event-details {
-    background-attachment: fixed;
-  }
-
-  #love-story {
-    background-attachment: fixed;
-  }
-
-  #gift {
-    background-attachment: fixed;
-  }
-
-  #rsvp {
-    background-attachment: fixed;
-  }
-
-  #guestbook {
-    background-attachment: fixed;
-  }
-
-  #closing {
-    background-attachment: fixed;
-  }
-}
+/* Catatan: background-attachment: fixed dengan background-size: auto
+   bekerja di semua device tanpa efek zoom yang mengganggu.
+   (cover menyebabkan zoom, auto menampilkan ukuran asli gambar) */
