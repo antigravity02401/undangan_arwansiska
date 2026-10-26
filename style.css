@@ -1231,7 +1231,7 @@ section {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(250, 244, 228, 0.40);
+  background: rgba(250, 244, 228, 0.70);
   border-radius: inherit;
   z-index: 0;
 }
@@ -1743,9 +1743,34 @@ section {
    =================================================== */
 #gift {
   position: relative;
-  /* Mobile-safe: scroll+cover. Desktop parallax via @media di bawah */
-  background: url('assets/1.jpg') center center / cover no-repeat scroll;
+  /* Meniru gaya #save-the-date: gambar diam saat scroll, tampil penuh */
+  background-image: url('assets/1.jpg');
+  background-attachment: fixed;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: #1a0a0a;
   padding: 60px 0;
+}
+
+/* Gradient overlay: transparan di atas, gelap di bawah — sama seperti #save-the-date */
+#gift::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.05) 0%,
+      rgba(0, 0, 0, 0.15) 40%,
+      rgba(0, 0, 0, 0.75) 75%,
+      rgba(0, 0, 0, 0.88) 100%);
+  z-index: 0;
+}
+
+/* Konten di atas overlay */
+#gift .section-inner,
+#gift > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ---- Outer oval: bg.jpeg sebagai border ---- */
