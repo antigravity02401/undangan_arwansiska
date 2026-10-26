@@ -2036,10 +2036,16 @@ section {
    =================================================== */
 #rsvp {
   position: relative;
-  /* Mobile-safe: scroll+cover. Desktop parallax via @media di bawah */
-  background: url('assets/5.jpg') center center / cover no-repeat scroll;
+  /* contain = tampilkan SELURUH gambar, tidak terpotong */
+  /* fixed   = gambar diam saat scroll, konten yang bergerak */
+  background-image: url('assets/5.jpg');
+  background-attachment: fixed;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: #1a0a0a;
   padding: 60px 0;
-  overflow: hidden;
+  /* overflow:hidden DIHAPUS — merusak background-attachment:fixed */
 }
 
 /* Overlay gelap tipis agar teks terbaca */
