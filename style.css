@@ -2306,9 +2306,15 @@ section {
    =================================================== */
 #guestbook {
   position: relative;
-  /* Mobile-safe: scroll+cover. Desktop parallax via @media di bawah */
-  background: url('assets/3.jpg') center center / cover no-repeat scroll;
-  overflow: hidden;
+  /* contain = tampilkan SELURUH gambar, tidak terpotong */
+  /* fixed   = gambar diam saat scroll, konten yang bergerak */
+  background-image: url('assets/3.jpg');
+  background-attachment: fixed;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: #1a0a0a;
+  /* overflow:hidden DIHAPUS — merusak background-attachment:fixed */
 }
 
 /* Overlay agar teks terbaca di atas 3.jpg */
