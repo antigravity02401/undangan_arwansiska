@@ -1,4 +1,4 @@
-/**
+b/**
  * UNDANGAN DIGITAL - ANWAR & SISKA
  * script.js — Interactive Logic + Supabase Integration
  */
@@ -26,15 +26,15 @@ const CONFIG = {
 // GALLERY IMAGES
 // ============================================================
 const GALLERY_IMAGES = [
-  'assets/01.jpg','assets/02.jpg','assets/03.jpg','assets/04.jpg',
-  'assets/05.jpg','assets/06.jpg','assets/07.jpg','assets/08.jpg',
-  'assets/09.jpg','assets/10.jpg','assets/11.jpg','assets/12.jpg',
-  'assets/13.jpg','assets/14.jpg','assets/15.jpg','assets/16.jpg',
-  'assets/17.jpg','assets/18.jpg','assets/19.jpg','assets/20.jpg',
-  'assets/21.jpg','assets/22.jpg','assets/23.jpg','assets/24.jpg',
-  'assets/25.jpg','assets/26.jpg','assets/27.jpg','assets/28.jpg',
-  'assets/29.jpg','assets/30.jpg','assets/31.jpg','assets/32.jpg',
-  'assets/33.jpg','assets/34.jpg',
+  'assets/01.jpg', 'assets/02.jpg', 'assets/03.jpg', 'assets/04.jpg',
+  'assets/05.jpg', 'assets/06.jpg', 'assets/07.jpg', 'assets/08.jpg',
+  'assets/09.jpg', 'assets/10.jpg', 'assets/11.jpg', 'assets/12.jpg',
+  'assets/13.jpg', 'assets/14.jpg', 'assets/15.jpg', 'assets/16.jpg',
+  'assets/17.jpg', 'assets/18.jpg', 'assets/19.jpg', 'assets/20.jpg',
+  'assets/21.jpg', 'assets/22.jpg', 'assets/23.jpg', 'assets/24.jpg',
+  'assets/25.jpg', 'assets/26.jpg', 'assets/27.jpg', 'assets/28.jpg',
+  'assets/29.jpg', 'assets/30.jpg', 'assets/31.jpg', 'assets/32.jpg',
+  'assets/33.jpg', 'assets/34.jpg',
 ];
 
 // Gambar grid utama = 12 pertama; sisanya masuk slider
@@ -43,7 +43,7 @@ const GALLERY_GRID_COUNT = 12;
 // ============================================================
 // STATE
 // ============================================================
-let rsvpData   = [];   // tidak dipakai untuk submit, hanya stat lokal
+let rsvpData = [];   // tidak dipakai untuk submit, hanya stat lokal
 let wishesData = [];   // akan diisi dari Supabase
 
 // ============================================================
@@ -62,7 +62,7 @@ function toggleAudio() {
     btn.classList.remove('playing');
     btn.querySelector('.music-icon').textContent = '🎵';
   } else {
-    audio.play().catch(() => {});
+    audio.play().catch(() => { });
     isPlaying = true;
     btn.classList.add('playing');
     btn.querySelector('.music-icon').textContent = '🎶';
@@ -79,7 +79,7 @@ function getGuestName() {
 
 function openInvitation() {
   const cover = document.getElementById('cover-overlay');
-  const main  = document.getElementById('main-invitation');
+  const main = document.getElementById('main-invitation');
 
   cover.classList.add('hidden');
   document.body.classList.remove('no-scroll');
@@ -92,7 +92,7 @@ function openInvitation() {
       isPlaying = true;
       document.getElementById('music-player').classList.add('playing');
       document.getElementById('music-player').querySelector('.music-icon').textContent = '🎶';
-    }).catch(() => {});
+    }).catch(() => { });
 
     // Mulai watcher hero reveal
     startHeroReveal();
@@ -115,13 +115,13 @@ function startHeroReveal() {
 
   // Urutan elemen dari atas ke bawah, delay bertahap (ms)
   const heroElements = [
-    { selector: '.hero-top-ornament', delay: 0   },
-    { selector: '.hero-label',        delay: 200 },
-    { selector: '.hero-couple-name',  delay: 450 },
-    { selector: '.hero-hashtag',      delay: 700 },
-    { selector: '.hero-divider',      delay: 850 },
-    { selector: '.hero-date',         delay: 1000 },
-    { selector: '.hero-scroll-hint',  delay: 1250 },
+    { selector: '.hero-top-ornament', delay: 0 },
+    { selector: '.hero-label', delay: 200 },
+    { selector: '.hero-couple-name', delay: 450 },
+    { selector: '.hero-hashtag', delay: 700 },
+    { selector: '.hero-divider', delay: 850 },
+    { selector: '.hero-date', delay: 1000 },
+    { selector: '.hero-scroll-hint', delay: 1250 },
   ];
 
   let revealed = false;
@@ -159,26 +159,26 @@ function startHeroReveal() {
 // COUNTDOWN TIMER
 // ============================================================
 function updateCountdown() {
-  const now  = new Date();
+  const now = new Date();
   const diff = CONFIG.weddingDate - now;
 
   if (diff <= 0) {
-    document.getElementById('cd-days').textContent   = '00';
-    document.getElementById('cd-hours').textContent  = '00';
-    document.getElementById('cd-mins').textContent   = '00';
-    document.getElementById('cd-secs').textContent   = '00';
+    document.getElementById('cd-days').textContent = '00';
+    document.getElementById('cd-hours').textContent = '00';
+    document.getElementById('cd-mins').textContent = '00';
+    document.getElementById('cd-secs').textContent = '00';
     return;
   }
 
-  const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const secs  = Math.floor((diff % (1000 * 60)) / 1000);
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
-  document.getElementById('cd-days').textContent  = String(days).padStart(2, '0');
+  document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
   document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
-  document.getElementById('cd-mins').textContent  = String(mins).padStart(2, '0');
-  document.getElementById('cd-secs').textContent  = String(secs).padStart(2, '0');
+  document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+  document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
 }
 
 // ============================================================
@@ -234,7 +234,7 @@ let currentLightboxIndex = 0;
 
 function openLightbox(index) {
   currentLightboxIndex = index;
-  const lb  = document.getElementById('lightbox');
+  const lb = document.getElementById('lightbox');
   const img = document.getElementById('lightbox-img');
   img.src = GALLERY_IMAGES[index];
   lb.classList.add('active');
@@ -272,7 +272,7 @@ function selectAttendance(type) {
 
 function submitRSVP(e) {
   e.preventDefault();
-  const name  = document.getElementById('rsvp-name').value.trim();
+  const name = document.getElementById('rsvp-name').value.trim();
   const total = document.getElementById('rsvp-total').value.trim();
 
   if (!name) { showToast('Mohon isi nama Anda'); return; }
@@ -303,7 +303,7 @@ function submitRSVP(e) {
 function updateRSVPStats() {
   const hadir = rsvpData.filter(r => r.attendance === 'hadir').length;
   const tidak = rsvpData.filter(r => r.attendance === 'tidak').length;
-  const ragu  = rsvpData.filter(r => r.attendance === 'ragu').length;
+  const ragu = rsvpData.filter(r => r.attendance === 'ragu').length;
 
   const elH = document.getElementById('stat-hadir');
   const elT = document.getElementById('stat-tidak');
@@ -318,7 +318,7 @@ function updateRSVPStats() {
 // ============================================================
 async function submitWish(e) {
   e.preventDefault();
-  const name    = document.getElementById('wish-name').value.trim();
+  const name = document.getElementById('wish-name').value.trim();
   const message = document.getElementById('wish-message').value.trim();
 
   if (!name || !message) { showToast('Mohon isi nama dan ucapan'); return; }
@@ -331,7 +331,7 @@ async function submitWish(e) {
     if (error) throw error;
 
     showToast('✓ Ucapan & doa terkirim!');
-    document.getElementById('wish-name').value    = '';
+    document.getElementById('wish-name').value = '';
     document.getElementById('wish-message').value = '';
     await loadAndRenderWishes();
   } catch (err) {
@@ -393,8 +393,8 @@ function renderWishes() {
 // ============================================================
 function saveToCalendar() {
   const start = '20251115T060000Z'; // UTC (13:00 WIB)
-  const end   = '20251115T090000Z';
-  const text  = encodeURIComponent('Pernikahan Zaki & Anti');
+  const end = '20251115T090000Z';
+  const text = encodeURIComponent('Pernikahan Zaki & Anti');
   const details = encodeURIComponent('Akad Nikah M. Zaki Saputra & Nor Afrianti');
   const location = encodeURIComponent('Jln Binaharapan Gg Pustu, Sungai Apit, Siak, Riau');
   const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${start}/${end}&details=${details}&location=${location}`;
@@ -476,7 +476,7 @@ function formatDate(iso) {
 // ============================================================
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('keydown', e => {
-  if (e.ctrlKey && ['s','u','c','a','x','p'].includes(e.key.toLowerCase())) {
+  if (e.ctrlKey && ['s', 'u', 'c', 'a', 'x', 'p'].includes(e.key.toLowerCase())) {
     e.preventDefault();
     showToast('Konten dilindungi hak cipta');
   }
@@ -488,7 +488,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('DOMContentLoaded', () => {
   // Set guest name on cover — tampilkan nama lengkap dari URL ?to=
   const guestName = getGuestName();
-  const guestEl   = document.getElementById('cover-guest-name');
+  const guestEl = document.getElementById('cover-guest-name');
   if (guestEl) {
     guestEl.textContent = guestName;
   }
@@ -516,7 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-open').addEventListener('click', openInvitation);
 
   // Lightbox close on backdrop click
-  document.getElementById('lightbox').addEventListener('click', function(e) {
+  document.getElementById('lightbox').addEventListener('click', function (e) {
     if (e.target === this) closeLightbox();
   });
 
@@ -551,29 +551,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Save the date
   const btnSave = document.getElementById('btn-save-date');
   if (btnSave) btnSave.addEventListener('click', saveToCalendar);
-
-  // Gambar 1.jpg section 4: tampilkan hanya saat section terlihat di viewport
-  // (position:fixed di-toggle via class std-in-view)
-  const stdSection = document.getElementById('save-the-date');
-  if (stdSection) {
-    const stdObserver = new IntersectionObserver(
-      ([entry]) => {
-        stdSection.classList.toggle('std-in-view', entry.isIntersecting);
-      },
-      { threshold: 0 }  // aktif begitu 1px section muncul di viewport
-    );
-    stdObserver.observe(stdSection);
-  }
 });
 
 // ============================================================
 // GIFT CONFIRM — Simpan ke Supabase + kirim WA
 // ============================================================
 async function submitGiftConfirm() {
-  const nama    = (document.getElementById('gc-nama')?.value || '').trim();
-  const bank    = (document.getElementById('gc-bank')?.value || '').trim();
+  const nama = (document.getElementById('gc-nama')?.value || '').trim();
+  const bank = (document.getElementById('gc-bank')?.value || '').trim();
   const nominal = (document.getElementById('gc-nominal')?.value || '').trim();
-  const ucapan  = (document.getElementById('gc-ucapan')?.value || '').trim();
+  const ucapan = (document.getElementById('gc-ucapan')?.value || '').trim();
   const buktiEl = document.getElementById('gc-bukti');
   const buktiFile = buktiEl?.files?.[0] || null;
 
@@ -611,7 +598,7 @@ async function submitGiftConfirm() {
     showToast('✓ Konfirmasi gift berhasil dikirim!');
 
     // 3. Reset form
-    ['gc-nama','gc-bank','gc-nominal','gc-ucapan'].forEach(id => {
+    ['gc-nama', 'gc-bank', 'gc-nominal', 'gc-ucapan'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
@@ -632,10 +619,10 @@ async function submitGiftConfirm() {
 // RSVP — Simpan ke Supabase
 // ============================================================
 async function submitRsvpWa() {
-  const nama      = (document.getElementById('rsvp-name')?.value || '').trim();
+  const nama = (document.getElementById('rsvp-name')?.value || '').trim();
   const kehadiran = document.getElementById('rsvp-kehadiran')?.value || 'hadir';
-  const jumlah    = parseInt(document.getElementById('rsvp-jumlah')?.value || '1');
-  const namaTamu  = getGuestName();
+  const jumlah = parseInt(document.getElementById('rsvp-jumlah')?.value || '1');
+  const namaTamu = getGuestName();
 
   if (!nama) {
     showToast('Mohon isi Nama terlebih dahulu.');

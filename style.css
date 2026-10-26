@@ -992,38 +992,17 @@ section {
   min-height: 100vh;
   display: flex;
   align-items: flex-end;
+  /* background-size:auto = ukuran asli foto, tidak di-zoom/crop */
+  /* background-attachment:fixed = foto diam saat scroll, teks yang bergerak */
+  /* overflow:hidden DIHAPUS — itu yang membuat fixed tidak bekerja */
+  background-image: url('assets/1.jpg');
+  background-attachment: fixed;
+  background-size: auto;
+  background-position: center center;
+  background-repeat: no-repeat;
   background-color: #1a0a0a;
-  /* overflow: hidden dihapus — menyebabkan background-attachment:fixed rusak */
 }
 
-/* Gambar 1.jpg: wrapper fixed, gambar ukuran asli di-center */
-.std-bg-img {
-  position: fixed;
-  inset: 0;
-  z-index: -1;  /* di belakang overlay ::before (z-index:0) dan konten (z-index:1) */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.std-bg-img img {
-  /* Ukuran asli — tidak di-stretch atau zoom */
-  width: auto;
-  height: auto;
-  max-width: none;
-  display: block;
-  opacity: 1;
-}
-
-/* Gambar hanya terlihat saat section save-the-date di viewport */
-#save-the-date:not(.std-in-view) .std-bg-img {
-  visibility: hidden;
-}
-
-#save-the-date.std-in-view .std-bg-img {
-  visibility: visible;
-}
 
 /* Gradient overlay: transparan di atas, gelap di bawah */
 #save-the-date::before {
