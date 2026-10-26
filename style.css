@@ -1140,21 +1140,25 @@ section {
 #event-details {
   position: relative;
   overflow: hidden;
-  /* Mobile-safe: scroll+cover. Desktop parallax via @media di bawah */
+  /* Meniru gaya #save-the-date: gambar diam saat scroll, tampil penuh */
   background-image: url('assets/2.jpg');
-  background-attachment: scroll;
-  background-size: cover;
+  background-attachment: fixed;
+  background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
-  background-color: #0d0a06;
+  background-color: #1a0a0a;
 }
 
-/* Gradient overlay agar teks kartu tetap terbaca */
+/* Gradient overlay: transparan di atas, gelap di bawah — sama seperti #save-the-date */
 #event-details::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(20, 10, 3, 0.70);
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.05) 0%,
+      rgba(0, 0, 0, 0.15) 40%,
+      rgba(0, 0, 0, 0.75) 75%,
+      rgba(0, 0, 0, 0.88) 100%);
   z-index: 0;
 }
 
