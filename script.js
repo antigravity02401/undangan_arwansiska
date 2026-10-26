@@ -1,4 +1,4 @@
-﻿/**
+/**
  * UNDANGAN DIGITAL - ANWAR & SISKA
  * script.js — Interactive Logic + Supabase Integration
  */
@@ -485,6 +485,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const btnSave = document.getElementById('btn-save-date');
   if (btnSave) btnSave.addEventListener('click', saveToCalendar);
+
+  // Section 2 — Gambar 4.jpg (position:fixed img): tampil hanya saat section di viewport
+  const qvSection = document.getElementById('quran-verse');
+  if (qvSection) {
+    new IntersectionObserver(
+      ([entry]) => qvSection.classList.toggle('qv-in-view', entry.isIntersecting),
+      { threshold: 0 }
+    ).observe(qvSection);
+  }
 });
 
 // ============================================================

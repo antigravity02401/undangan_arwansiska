@@ -665,23 +665,31 @@ section {
 #quran-verse {
   position: relative;
   min-height: 100svh;
-  overflow: hidden;
+  /* overflow:hidden DIHAPUS — agar gambar fixed bisa bekerja */
   display: flex;
   flex-direction: column;
 }
 
-/* Foto background full-height */
+/* Foto background: fixed (diam saat scroll), contain (tampil penuh) */
 .qv-photo {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0;
+  background-color: #1a0a0a;
+  pointer-events: none;
+  visibility: hidden; /* disembunyikan saat section tidak di viewport */
+}
+
+/* Tampilkan hanya saat section quran-verse sedang di viewport */
+#quran-verse.qv-in-view .qv-photo {
+  visibility: visible;
 }
 
 .qv-photo img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 20%;
+  object-fit: contain;     /* tampilkan SELURUH foto, tidak di-crop */
+  object-position: center center;
   display: block;
 }
 
