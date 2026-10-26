@@ -551,6 +551,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // Save the date
   const btnSave = document.getElementById('btn-save-date');
   if (btnSave) btnSave.addEventListener('click', saveToCalendar);
+
+  // Gambar 1.jpg section 4: tampilkan hanya saat section terlihat di viewport
+  // (position:fixed di-toggle via class std-in-view)
+  const stdSection = document.getElementById('save-the-date');
+  if (stdSection) {
+    const stdObserver = new IntersectionObserver(
+      ([entry]) => {
+        stdSection.classList.toggle('std-in-view', entry.isIntersecting);
+      },
+      { threshold: 0 }  // aktif begitu 1px section muncul di viewport
+    );
+    stdObserver.observe(stdSection);
+  }
 });
 
 // ============================================================
