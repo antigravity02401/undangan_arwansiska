@@ -992,12 +992,11 @@ section {
   min-height: 100vh;
   display: flex;
   align-items: flex-end;
-  /* background-size:auto = ukuran asli foto, tidak di-zoom/crop */
-  /* background-attachment:fixed = foto diam saat scroll, teks yang bergerak */
-  /* overflow:hidden DIHAPUS — itu yang membuat fixed tidak bekerja */
+  /* contain = tampilkan SELURUH gambar, tidak ada yang terpotong */
+  /* fixed   = gambar diam saat scroll, teks/overlay yang bergerak  */
   background-image: url('assets/1.jpg');
   background-attachment: fixed;
-  background-size: auto;
+  background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #1a0a0a;
