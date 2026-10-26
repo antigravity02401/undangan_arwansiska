@@ -400,11 +400,13 @@ button {
    =================================================== */
 #main-invitation {
   opacity: 0;
+  pointer-events: none; /* Jangan blokir klik tombol Buka Undangan di cover */
   transition: opacity 0.8s ease;
 }
 
 #main-invitation.visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* ===================================================
@@ -760,8 +762,8 @@ section {
    =================================================== */
 #couple {
   position: relative;
-  /* bg.jpeg — ukuran asli, posisi tetap saat scroll */
-  background: url('assets/bg.jpeg') center center / auto no-repeat fixed;
+  /* bg.jpeg — mobile: scroll+cover (aman), desktop: fixed via media query */
+  background: url('assets/bg.jpeg') center center / cover no-repeat scroll;
   overflow: hidden;
   padding: 32px 16px 48px;
 }
@@ -990,7 +992,7 @@ section {
   min-height: 100vh;
   display: flex;
   align-items: flex-end;
-  /* Background ukuran asli, tetap diam saat scroll */
+  /* Gambar 1.jpg: ukuran asli (auto), fixed saat scroll, tidak di-zoom */
   background-image: url('assets/1.jpg');
   background-attachment: fixed;
   background-size: auto;
@@ -1136,10 +1138,10 @@ section {
 #event-details {
   position: relative;
   overflow: hidden;
-  /* Background ukuran asli, tetap diam saat scroll */
+  /* Mobile-safe: scroll+cover. Desktop parallax via @media di bawah */
   background-image: url('assets/2.jpg');
-  background-attachment: fixed;
-  background-size: auto;
+  background-attachment: scroll;
+  background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #0d0a06;
@@ -1308,10 +1310,10 @@ section {
 #love-story {
   position: relative;
   overflow: hidden;
-  /* Background ukuran asli, tetap diam saat scroll */
+  /* Mobile-safe: scroll+cover. Desktop parallax via @media di bawah */
   background-image: url('assets/bg.jpeg');
-  background-attachment: fixed;
-  background-size: auto;
+  background-attachment: scroll;
+  background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #f5edd5;
@@ -1711,8 +1713,8 @@ section {
    =================================================== */
 #gift {
   position: relative;
-  /* 1.jpg — ukuran asli, tetap diam saat scroll */
-  background: url('assets/1.jpg') center center / auto no-repeat fixed;
+  /* Mobile-safe: scroll+cover. Desktop parallax via @media di bawah */
+  background: url('assets/1.jpg') center center / cover no-repeat scroll;
   padding: 60px 0;
 }
 
@@ -2033,8 +2035,8 @@ section {
    =================================================== */
 #rsvp {
   position: relative;
-  /* 5.jpg — ukuran asli, tetap diam saat scroll */
-  background: url('assets/5.jpg') center center / auto no-repeat fixed;
+  /* Mobile-safe: scroll+cover. Desktop parallax via @media di bawah */
+  background: url('assets/5.jpg') center center / cover no-repeat scroll;
   padding: 60px 0;
   overflow: hidden;
 }
@@ -2297,8 +2299,8 @@ section {
    =================================================== */
 #guestbook {
   position: relative;
-  /* 3.jpg — ukuran asli, tetap diam saat scroll */
-  background: url('assets/3.jpg') center center / auto no-repeat fixed;
+  /* Mobile-safe: scroll+cover. Desktop parallax via @media di bawah */
+  background: url('assets/3.jpg') center center / cover no-repeat scroll;
   overflow: hidden;
 }
 
@@ -2465,8 +2467,8 @@ section {
    CLOSING / PENUTUP
    =================================================== */
 #closing {
-  /* 6.jpg — ukuran asli, tetap diam saat scroll */
-  background: url('assets/6.jpg') center center / auto no-repeat fixed;
+  /* Mobile-safe: scroll+cover. Desktop parallax via @media di bawah */
+  background: url('assets/6.jpg') center center / cover no-repeat scroll;
   background-color: var(--burgundy);
   text-align: center;
   padding: 80px 24px;
@@ -2676,6 +2678,20 @@ footer {
   }
 }
 
-/* Catatan: background-attachment: fixed dengan background-size: auto
-   bekerja di semua device tanpa efek zoom yang mengganggu.
-   (cover menyebabkan zoom, auto menampilkan ukuran asli gambar) */
+/* ===================================================
+   PARALLAX — DESKTOP/NON-TOUCH ONLY
+   background-attachment: fixed RUSAK di iOS Safari & Android WebView:
+   browser menggunakan ukuran viewport sebagai referensi posisi background
+   sehingga gambar terlihat zoom/terpotong tidak wajar.
+   Solusi benar: fixed HANYA aktif di device non-touch (mouse/trackpad).
+   =================================================== */
+@media (hover: hover) and (pointer: fine) and (min-width: 769px) {
+  #couple       { background-attachment: fixed; }
+  #save-the-date { background-attachment: fixed; }
+  #event-details { background-attachment: fixed; }
+  #love-story   { background-attachment: fixed; }
+  #gift         { background-attachment: fixed; }
+  #rsvp         { background-attachment: fixed; }
+  #guestbook    { background-attachment: fixed; }
+  #closing      { background-attachment: fixed; }
+}
