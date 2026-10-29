@@ -17,7 +17,7 @@ const _SB = createClient(
 // ============================================================
 const CONFIG = {
   weddingDate: new Date('2027-01-01T08:00:00+07:00'),
-  audioSrc: 'https://web.galeriundanganofficial.com/wp-content/uploads/2025/11/Senario-Zapin-Usik-Mengusik-Lirik.mp3',
+  audioSrc: 'assets/music.mp3',
   mapsAkad: 'https://maps.google.com/?q=Kampung+Mengkapan+JL+SMP+Gg+Cik+Nor+Siak+Riau',
   mapsResepsi: 'https://maps.google.com/?q=Kampung+Mengkapan+JL+SMP+Gg+Cik+Nor+Siak+Riau',
 };
